@@ -1,0 +1,22 @@
+---
+# I will find new way to reload instead of restart :)
+- name: reload dns_server
+  command: sh -c "cd {{ working_dir }} && docker-compose restart dns-server"
+  when:
+    - "'dns_server' in group_names"
+  tags:
+    - dns_server
+
+- name: reload sni_proxy
+  command: sh -c "cd {{ working_dir }} && docker-compose restart sni-proxy"
+  when:
+    - "'sni_proxy' in group_names"
+  tags:
+    - sni_proxy
+
+- name: reload http_proxy
+  command: sh -c "cd {{ working_dir }} && docker-compose restart http-proxy"
+  when:
+    - "'http_proxy' in group_names"
+  tags:
+    - http_proxy
