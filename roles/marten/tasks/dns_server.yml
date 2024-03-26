@@ -1,0 +1,51 @@
+---
+- name: check config folder is exist
+  stat:
+    path: "{{ dns_server_config_dir }}"
+  register: dns_server_config_dir_exist
+  tags:
+    - dns_server
+
+- name: create config directory
+  file: 
+    path: "{{ dns_server_config_dir }}"
+    owner: root 
+    group: root 
+    mode: 0755 
+    state: directory
+    recurse: yes
+  when:
+    - dns_server_config_dir_exist.stat.exists is defined 
+    - not dns_server_config_dir_exist.stat.exists
+  tags:
+    - dns_server
+
+- name: replace unbound.conf
+  template:
+    src: unbound.conf.j2
+    dest: "{{ dns_server_config_file }}"
+    mode: 0644
+  notify:
+    - reload dns_server
+  tags:
+    - dns_server
+
+- name: replace unbound security.conf
+  template:
+    src: unbound_security.conf.j2
+    dest: "{{ dns_server_config_dir }}/security.conf"
+    mode: 0644
+  notify:
+    - reload dns_server
+  tags:
+    - dns_server
+
+- name: replace unbound a-records.conf
+  template:
+    src: unbound_a-records.conf.j2
+    dest: "{{ dns_server_config_dir }}/a-records.conf"
+    mode: 0644
+  notify:
+    - reload dns_server
+  tags:
+    - dns_server

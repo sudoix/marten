@@ -1,0 +1,26 @@
+---
+- name: check working directory is exist
+  stat:
+    path: "{{ working_dir }}"
+  register: working_dir_exist
+
+- name: create working directory
+  file: 
+    path: "{{ working_dir }}"
+    owner: root 
+    group: root 
+    mode: 0755 
+    state: directory
+  when:
+    - working_dir_exist.stat.exists is defined 
+    - not working_dir_exist.stat.exists
+
+- name: check docker command is exist
+  command: which docker
+  register: docker_exist
+  changed_when: false
+
+- name: check docker-compose is exist
+  command: which docker-compose
+  register: docker_compose_exist
+  changed_when: false

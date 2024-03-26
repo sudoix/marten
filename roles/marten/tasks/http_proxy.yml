@@ -1,0 +1,41 @@
+---
+- name: check config folder is exist
+  stat:
+    path: "{{ http_proxy_config_dir }}/conf.d"
+  register: http_proxy_config_dir_exist
+  tags:
+    - http_proxy
+
+- name: create config directory
+  file: 
+    path: "{{ http_proxy_config_dir }}/conf.d"
+    owner: root 
+    group: root 
+    mode: 0755 
+    state: directory
+    recurse: yes
+  when:
+    - http_proxy_config_dir_exist.stat.exists is defined 
+    - not http_proxy_config_dir_exist.stat.exists
+  tags:
+    - http_proxy
+
+- name: replace nginx.conf
+  template:
+    src: nginx.conf.j2
+    dest: "{{ http_proxy_config_file }}"
+    mode: 0644
+  notify:
+    - reload http_proxy
+  tags:
+    - http_proxy
+
+- name: replace nginx server-name.conf
+  template:
+    src: nginx-server-name.conf.j2
+    dest: "{{ http_proxy_config_dir }}/conf.d/server-name.conf"
+    mode: 0644
+  notify:
+    - reload http_proxy
+  tags:
+    - http_proxy
