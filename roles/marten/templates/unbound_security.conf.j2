@@ -1,0 +1,5 @@
+#
+#   Add Your IP
+    {% for address in unbound_allowed_query %}
+    access-control: {{ address }} allow
+    {% endfor %}

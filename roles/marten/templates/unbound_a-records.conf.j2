@@ -1,0 +1,9 @@
+# A Record
+{% for domain in domains %}
+### {{ domain }}
+local-zone: "{{ domain }}" redirect
+{% for host in groups['sni_proxy'] %}
+local-data: "{{ domain }} {{ unbound_a_record_ttl }} IN A {{ host }}"
+{% endfor %}
+
+{% endfor %}

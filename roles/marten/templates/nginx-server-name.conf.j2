@@ -1,0 +1,6 @@
+{% for domain in domains %}
+{% set main_part = domain | regex_replace('(.*)\..+', '\\1') | replace("\.","\\\.") %}
+### {{ domain }}
+server_name ~^(www.)?(?<domain>(.*\.*{{ main_part }}\..+$))$;
+
+{% endfor %}
