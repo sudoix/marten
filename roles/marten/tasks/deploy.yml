@@ -1,0 +1,40 @@
+---
+- name: replace docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ working_dir }}/docker-compose.yml"
+    mode: 0644
+  tags:
+    - http_proxy
+    - sni_proxy
+    - dns_server
+
+- name: up the http proxy
+  command: sh -c "cd {{ working_dir }} && docker-compose up -d http-proxy"
+  register: http_proxy_status
+  changed_when:
+    - "'is up-to-date' not in http_proxy_status.stderr"
+  when:
+    - "'http_proxy' in group_names"
+  tags:
+    - http_proxy
+
+- name: up the sni proxy
+  command: sh -c "cd {{ working_dir }} && docker-compose up -d sni-proxy"
+  register: sni_proxy_status
+  changed_when:
+    - "'is up-to-date' not in sni_proxy_status.stderr"
+  when:
+    - "'sni_proxy' in group_names"
+  tags:
+    - sni_proxy
+
+- name: up the dns server
+  command: sh -c "cd {{ working_dir }} && docker-compose up -d dns-server"
+  register: dns_server_status
+  changed_when:
+    - "'is up-to-date' not in dns_server_status.stderr"
+  when:
+    - "'dns_server' in group_names"
+  tags:
+    - dns_server

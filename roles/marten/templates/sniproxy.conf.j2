@@ -1,0 +1,22 @@
+resolver {
+    {% for resolver in sni_proxy_resolvers %}
+    nameserver {{ resolver }}
+    {% endfor %}
+    mode ipv4_only
+}
+listen 0.0.0.0:443 {
+    proto tls
+    table https_hosts
+    access_log {
+        filename /var/log/sniproxy/https_access.log
+        priority notice
+    }
+}
+table https_hosts {
+    {% for domain in domains %}
+    {% set main_part = domain | replace("\.","\\\.") %}
+    ### {{ domain }}
+    .*\.*{{ main_part }}      *:443
+
+    {% endfor %}  
+}

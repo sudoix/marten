@@ -1,0 +1,11 @@
+---
+sni_proxy_resolvers:
+  - 1.1.1.1
+  - 8.8.8.8
+
+sni_proxy_config_dir: "{{ working_dir }}/conf/sni_proxy"
+sni_proxy_config_file: "{{ sni_proxy_config_dir }}/sniproxy.conf"
+
+sni_proxy_docker_image: '9350733512/sniproxy:0.6.0'
+sni_proxy_docker_volume:
+  - "{{ sni_proxy_config_file }}:/etc/sniproxy/sniproxy.conf:ro"

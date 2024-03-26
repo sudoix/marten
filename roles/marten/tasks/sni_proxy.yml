@@ -1,0 +1,31 @@
+---
+- name: check config directory
+  stat:
+    path: "{{ sni_proxy_config_dir }}"
+  register: sni_proxy_config_dir_exist
+  tags:
+    - sni_proxy
+
+- name: create config directory
+  file: 
+    path: "{{ sni_proxy_config_dir }}"
+    owner: root 
+    group: root 
+    mode: 0755 
+    state: directory
+    recurse: yes
+  when:
+    - sni_proxy_config_dir_exist.stat.exists is defined 
+    - not sni_proxy_config_dir_exist.stat.exists
+  tags:
+    - sni_proxy
+
+- name: replace sniproxy.conf
+  template:
+    src: sniproxy.conf.j2
+    dest: "{{ sni_proxy_config_file }}"
+    mode: 0644
+  notify:
+    - reload sni_proxy
+  tags:
+    - sni_proxy

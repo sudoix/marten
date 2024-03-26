@@ -1,0 +1,22 @@
+---
+unbound_a_record_ttl: 180
+unbound_cache_min_ttl: 300
+unbound_cache_max_ttl: 86400
+
+unbound_forward_tls_upstream: "yes"
+unbound_forward_upstream_servers:
+  - "1.1.1.1@853#cloudflare-dns.com"
+  - "1.0.0.1@853#cloudflare-dns.com"
+
+unbound_allowed_query:
+  - "0.0.0.0/0"
+
+dns_server_config_dir: "{{ working_dir }}/conf/unbound"
+dns_server_config_file: "{{ dns_server_config_dir }}/unbound.conf"
+
+dns_server_docker_image: 'mvance/unbound:1.12.0'
+dns_server_docker_volume:
+  - "{{ dns_server_config_file }}:/opt/unbound/etc/unbound/unbound.conf:ro"
+  - "{{ dns_server_config_dir }}/security.conf:/opt/unbound/etc/unbound/security.conf:ro"
+  - "{{ dns_server_config_dir }}/a-records.conf:/opt/unbound/etc/unbound/a-records.conf:ro"
+

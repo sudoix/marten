@@ -1,0 +1,25 @@
+---
+- name: run requirements
+  include_tasks: prerequirements.yml
+  tags:
+    - http_proxy
+    - sni_proxy
+    - dns_server
+
+- name: setup sni proxy
+  include_tasks: sni_proxy.yml
+  when:
+    - "'sni_proxy' in group_names"
+
+- name: setup http proxy
+  include_tasks: http_proxy.yml
+  when:
+    - "'http_proxy' in group_names"
+
+- name: setup dns server
+  include_tasks: dns_server.yml
+  when:
+    - "'dns_server' in group_names"
+
+- name: deploy all componants
+  include_tasks: deploy.yml

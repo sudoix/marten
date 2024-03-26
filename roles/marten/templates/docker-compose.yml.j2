@@ -1,0 +1,29 @@
+version: '2'
+services:
+  dns-server:
+    image: {{ dns_server_docker_image }}
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+    {% for volume in dns_server_docker_volume %}
+      - "{{ volume }}"
+    {% endfor %}
+
+  sni-proxy:
+    image: {{ sni_proxy_docker_image }}
+    restart: unless-stopped
+    network_mode: host
+    command: "-c /etc/sniproxy/sniproxy.conf"
+    volumes:
+    {% for volume in sni_proxy_docker_volume %}
+      - "{{ volume }}"
+    {% endfor %}
+
+  http-proxy:
+    image: {{ http_proxy_docker_image }}
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+    {% for volume in http_proxy_docker_volume %}
+      - "{{ volume }}"
+    {% endfor %}
