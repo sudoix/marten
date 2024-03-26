@@ -1,0 +1,15 @@
+---
+nginx_resolvers:
+  - 1.1.1.1
+  - 8.8.8.8
+
+nginx_worker_connections: 10000
+nginx_worker_processes: 'auto'
+
+http_proxy_config_dir: "{{ working_dir }}/conf/nginx"
+http_proxy_config_file: "{{ http_proxy_config_dir }}/nginx.conf"
+
+http_proxy_docker_image: 'nginx'
+http_proxy_docker_volume:
+  - "{{ http_proxy_config_file }}:/etc/nginx/nginx.conf:ro"
+  - "{{ http_proxy_config_dir }}/conf.d:/etc/nginx/conf.d:ro"
