@@ -19,8 +19,42 @@
   command: which docker
   register: docker_exist
   changed_when: false
+  ignore_errors: true
+
+- name: install docker if not exist
+  apt:
+    name: docker
+    state: present
+  when: docker_exist.rc != 0 
 
 - name: check docker-compose is exist
   command: which docker-compose
   register: docker_compose_exist
   changed_when: false
+  ignore_errors: true
+
+- name: install docker compose  if not exist
+  apt:
+    name: docker-compose
+    state: present
+  when: docker_compose_exist.rc != 0 
+
+- name: Disable resolved Service
+  service:
+    name: systemd-resolved
+    state: stopped
+    enabled: no
+  when: ansible_distribution == "Ubuntu"
+
+- name: Unlink Old Resolv.conf
+  command: unlink /etc/resolv.conf
+  register: is_old_resolv_conf_exist
+  ignore_errors: true
+
+- name: Copy New Resolv.conf
+  copy:
+    src: resolv.conf
+    dest: /etc/resolv.conf
+  when: is_old_resolv_conf_exist.rc == 0 
+  
+
